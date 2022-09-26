@@ -5,16 +5,14 @@ function [battleground,enemyIndex,playerHealth] = enemyAI(battleground,enemyInde
        enemyY = enemyIndex(2,en); % enemy Y
        diffY = enemyY - playerY;
        diffX = enemyX - playerX;
+       randVar4Enemies = randi(10);
+       
+       if randVar4Enemies < 5
 
-        if playerHealth < 0
-            disp("Game over!")
-            break
-        end
-    
-%         battleground
         if (diffY == 0 || abs(diffY) == 1) && (diffX == 0 || abs(diffX) == 1)
             battleground(playerY,playerX) = battleground(playerY,playerX) - damage;
-            fprintf("15 damage to you by enemy with health %f! \n",enemyIndex(1,en))
+            playerHealth = playerHealth - damage;
+            fprintf("%f damage to you by enemy with health %f! \n",damage,enemyIndex(1,en))
     
         elseif randi(2) == 1 % enemies have an equal chance of going left or right. 
     
@@ -29,8 +27,8 @@ function [battleground,enemyIndex,playerHealth] = enemyAI(battleground,enemyInde
                                 break
                             end
     
-                            battleground(newEnemyY,enemyX) = playerHealth;
-                            fprintf("15 damage to you by enemy with health %f! \n",enemyIndex(1,en))
+                            playerHealth = battleground(newEnemyY,enemyX);
+                            fprintf("%f damage to you by enemy with health %f! \n",damage,enemyIndex(1,en))
                             return
     
                         elseif battleground(newEnemyY,enemyX) ~= 0
@@ -55,7 +53,6 @@ function [battleground,enemyIndex,playerHealth] = enemyAI(battleground,enemyInde
                             enemyY = newEnemyY;
                         end
                     end
-                end
     
            else
     
@@ -66,7 +63,7 @@ function [battleground,enemyIndex,playerHealth] = enemyAI(battleground,enemyInde
                         if battleground(enemyY,newEnemyX) == playerHealth % simulates running into you for damage
                             playerHealth = playerHealth - damage;
                             battleground(enemyY,newEnemyX) = playerHealth;
-                            fprintf("15 damage to you by enemy with health %f! \n",enemyIndex(1,en))
+                            fprintf("%f damage to you by enemy with health %f! \n",damage,enemyIndex(1,en))
                             return
                         elseif battleground(enemyY,newEnemyX) ~= 0
                             return
@@ -90,7 +87,8 @@ function [battleground,enemyIndex,playerHealth] = enemyAI(battleground,enemyInde
                         return
                     end
                 end
-
+           end
+       end
        end
 
 

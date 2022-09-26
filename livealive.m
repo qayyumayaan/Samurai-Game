@@ -3,17 +3,18 @@
 clc
 clear
 
-Y = 6; % board length
+Y = 7; % board height
 X = 6; % board width
 battleground = zeros([Y X]);
 
-enemyNumber = 1;
+enemyNumber = 10;
 
 playerNumber = 1;
-playerHealth = 100;
+playerHealth = 150;
 enemHealthMin = 40;
 enemHealthMax = 100;
 damage = 15;
+attackPower = 25; % user
 
 % battleground(Y,X)
 
@@ -27,7 +28,7 @@ damage = 15;
 % battleground(playerY,playerX) = playerHealth;
 while playerHealth > 0 || enemyNumber > 0
     disp(battleground)
-    [battleground,playerX,playerY,userInput,enemyIndex,enemyNumber] = parseInput(battleground,playerX,playerY,X,Y,enemyIndex,enemyNumber);
+    [battleground,playerX,playerY,userInput,enemyIndex,enemyNumber] = parseInput(battleground,playerX,playerY,X,Y,enemyIndex,enemyNumber,attackPower);
     if userInput == "0"
         break
     end
@@ -42,6 +43,7 @@ while playerHealth > 0 || enemyNumber > 0
 %     end
     if playerHealth < 0
         disp("Game over!")
+        disp(battleground)
         break
     end
 end

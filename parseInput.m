@@ -1,6 +1,6 @@
-function [battleground,playerX,playerY,userInput,enemyIndex,enemyNumber] = parseInput(battleground,playerX,playerY,X,Y,enemyIndex,enemyNumber)
+function [battleground,playerX,playerY,userInput,enemyIndex,enemyNumber] = parseInput(battleground,playerX,playerY,X,Y,enemyIndex,enemyNumber,attackPower)
 
-    userInput = input(compose(splitlines("What will you do?" + "\n" + "0: quit. w:up. a: left. s:down. d: right. 5: list attacks. attack1. 7: attack2." + "\n")),"s");
+    userInput = input(compose(splitlines("What will you do?" + "\n" + "0: quit. w:up. a: left. s:down. d: right. attack1. " + "\n")),"s");
     switch userInput
 
         case "0"
@@ -43,7 +43,7 @@ function [battleground,playerX,playerY,userInput,enemyIndex,enemyNumber] = parse
             end
 
         case "attack1"
-            attackPower = 15;
+
             for iY = -1:1
                 for iX = -1:1
                     if playerY+iY > Y || playerY+iY <= 0 || playerX+iX > X  || playerX+iX <= 0
@@ -56,8 +56,8 @@ function [battleground,playerX,playerY,userInput,enemyIndex,enemyNumber] = parse
                             else
                                 for iEnemy = 1:enemyNumber
                                     if enemyIndex(1,iEnemy) == battleground(playerY+iY,playerX+iX)
-                                        enemyIndex(1,iEnemy) = battleground(playerY+iY,playerX+iX);
                                         battleground(playerY+iY,playerX+iX) = battleground(playerY+iY,playerX+iX) + attackPower; 
+                                        enemyIndex(1,iEnemy) = battleground(playerY+iY,playerX+iX);
                                         disp("15 damage dealt!");  
                                     end
                                 end
