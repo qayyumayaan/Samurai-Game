@@ -27,7 +27,7 @@ damage = 15;
 % battleground(playerY,playerX) = playerHealth;
 while playerHealth > 0 || enemyNumber > 0
     disp(battleground)
-    [battleground,playerX,playerY,userInput,enemyIndex,enemyNumber] = parseInput(battleground,playerX,playerY,X,Y,enemyIndex,enemyNumber);
+    [battleground,playerX,playerY,userInput,enemyIndex] = parseInput(battleground,playerX,playerY,X,Y,enemyIndex);
     if userInput == "0"
         break
     end
@@ -38,11 +38,10 @@ while playerHealth > 0 || enemyNumber > 0
     end
 %     randVar4Enemies = randi(10);
 %     if randVar4Enemies < 9
-        [battleground,enemyIndex,playerHealth] = enemyAI(battleground,enemyIndex,playerX,playerY,X,Y,enemyNumber,playerHealth,damage);
+        [battleground,enemyIndex,playerHealth] = enemyAI(battleground,enemyIndex,playerX,playerY,X,Y,enemyNumber,playerHealth);
 %     end
     if playerHealth < 0
         disp("Game over!")
-        break
     end
 end
 

@@ -1,4 +1,4 @@
-function [battleground,playerX,playerY,userInput] = parseInput(battleground,playerX,playerY,X,Y)
+function [battleground,playerX,playerY,userInput,enemyIndex,enemyNumber] = parseInput(battleground,playerX,playerY,X,Y,enemyIndex,enemyNumber)
 
     userInput = input(compose(splitlines("What will you do?" + "\n" + "0: quit. w:up. a: left. s:down. d: right. 5: list attacks. attack1. 7: attack2." + "\n")),"s");
     switch userInput
@@ -43,18 +43,25 @@ function [battleground,playerX,playerY,userInput] = parseInput(battleground,play
             end
 
         case "attack1"
-            for iY = int16(-1:1)
-                for iX = int16(-1:1)
+            attackPower = 15;
+            for iY = -1:1
+                for iX = -1:1
                     if playerY+iY > Y || playerY+iY <= 0 || playerX+iX > X  || playerX+iX <= 0
-                        disp("Out of bounds, for now")
                     else
                         if battleground(playerY+iY,playerX+iX) < 0
-                            if battleground(playerY+iY,playerX+iX) + 50 > 0
+                            if battleground(playerY+iY,playerX+iX) + attackPower >= 0
                                 battleground(playerY+iY,playerX+iX) = 0;
                                 disp(" ");
                                 disp("Enemy eliminated!");
                             else
-                                battleground(playerY+iY,playerX+iX) = battleground(playerY+iY,playerX+iX) + 15; 
+                                for iEnemy = 1:enemyNumber
+                                    if enemyIndex(1,iEnemy) == battleground(playerY+iY,playerX+iX)
+                                        enemyIndex(1,iEnemy) = battleground(playerY+iY,playerX+iX);
+                                        battleground(playerY+iY,playerX+iX) = battleground(playerY+iY,playerX+iX) + attackPower; 
+                                        disp("15 damage dealt!");  
+                                    end
+                                end
+
                             end
                         end
                     end
@@ -62,18 +69,19 @@ function [battleground,playerX,playerY,userInput] = parseInput(battleground,play
             end
 
         case "attack2"
-            for iY = int16(1:1)
-                for iX = int16(-X:X)
+            attackPower = 50;
+            for iY = 1:1
+                for iX = -X:X
                     if playerY+iY > Y || playerY+iY <= 0 || playerX+iX > X  || playerX+iX <= 0
-                        disp("Out of bounds, for now")
+                        
                     else
                         if battleground(playerY+iY,playerX+iX) < 0
-                            if battleground(playerY+iY,playerX+iX) + 50 > 0
+                            if battleground(playerY+iY,playerX+iX) + attackPower > 0
                                 battleground(playerY+iY,playerX+iX) = 0;
                                 disp(" ");
                                 disp("Enemy eliminated!");
                             else
-                                battleground(playerY+iY,playerX+iX) = battleground(playerY+iY,playerX+iX) + 15; 
+                                battleground(playerY+iY,playerX+iX) = battleground(playerY+iY,playerX+iX) + attackPower; 
                             end
                         end
                     end
