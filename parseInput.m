@@ -50,15 +50,21 @@ function [battleground,playerX,playerY,userInput,enemyIndex,enemyNumber] = parse
                     else
                         if battleground(playerY+iY,playerX+iX) < 0
                             if battleground(playerY+iY,playerX+iX) + attackPower >= 0
-                                battleground(playerY+iY,playerX+iX) = 0;
-                                disp(" ");
-                                disp("Enemy eliminated!");
+                                for iEnemy = 1:enemyNumber
+                                    if enemyIndex(1,iEnemy) == battleground(playerY+iY,playerX+iX)
+                                        battleground(playerY+iY,playerX+iX) = 0;
+                                        enemyIndex(1,iEnemy) = battleground(playerY+iY,playerX+iX);
+                                        fprintf("/n Enemy eliminated! /n");
+                                    end
+                                end
+                                
+
                             else
                                 for iEnemy = 1:enemyNumber
                                     if enemyIndex(1,iEnemy) == battleground(playerY+iY,playerX+iX)
                                         battleground(playerY+iY,playerX+iX) = battleground(playerY+iY,playerX+iX) + attackPower; 
                                         enemyIndex(1,iEnemy) = battleground(playerY+iY,playerX+iX);
-                                        disp("15 damage dealt!");  
+                                        fprintf("%f damage dealt! \n",attackPower);  
                                     end
                                 end
 
