@@ -1,4 +1,4 @@
-function [battleground,playerX,playerY,userInput,enemyIndex,enemyNumber, enemyIndexBattleground] = parseInput(battleground,playerX,playerY,enemyIndex,enemyNumber,attackPower, damage, boardX, boardY, enemyIndexBattleground)
+function [battleground,playerX,playerY,userInput,enemyIndex,enemyNumber] = parseInput(battleground,playerX,playerY,enemyIndex,enemyNumber,attackPower, damage, boardX, boardY)
 
     userInput = input(compose(splitlines("What will you do?" + "\n" + "0: quit. w:up. a: left. s:down. d: right. attack1. " + "\n")),"s");
     switch userInput
@@ -48,7 +48,7 @@ function [battleground,playerX,playerY,userInput,enemyIndex,enemyNumber, enemyIn
 
         case "attack2"
 
-            [battleground, enemyIndex, enemyIndexBattleground] = attacks(userInput, battleground, enemyIndex, playerX, playerY, boardX, boardY, enemyNumber, attackPower, damage, enemyIndexBattleground);
+            [battleground, enemyIndex] = attacks(userInput, battleground, enemyIndex, playerX, playerY, boardX, boardY, enemyNumber, attackPower, damage);
 
         otherwise
             disp("Invalid input. Please try again.");

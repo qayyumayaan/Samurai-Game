@@ -20,15 +20,12 @@ attackPower = 25; % user
 
 % player and enemy need: location, health, attacks. 
 
-[battleground,enemyIndex] = enemyPlacement(enemyNumber,boardY,boardX,battleground,enemyHealthMin,enemyHealthMax);
+[battleground,enemyIndex,enemyNumber, enemyIndexBattleground] = enemyPlacement(enemyNumber,boardY,boardX,battleground,enemyHealthMin,enemyHealthMax); 
 [battleground,playerX,playerY] = playerPlacement(playerNumber,boardY,boardX,battleground,playerHealth);
 
-% playerX = X;
-% playerY = 1;
-% battleground(playerY,playerX) = playerHealth;
 while playerHealth > 0 || enemyNumber > 0
     disp(battleground)
-    [battleground,playerX,playerY,userInput,enemyIndex,enemyNumber] = parseInput(battleground,playerX,playerY,boardX,boardY,enemyIndex,enemyNumber,attackPower);
+    [battleground,playerX,playerY,userInput,enemyIndex,enemyNumber, enemyIndexBattleground] = parseInput(battleground,playerX,playerY,enemyIndex,enemyNumber,attackPower, damage, boardX, boardY, enemyIndexBattleground);
     if userInput == "0"
         break
     end
@@ -37,7 +34,7 @@ while playerHealth > 0 || enemyNumber > 0
         disp("All enemies eliminated! You win!");
         break
     else
-        [battleground,enemyIndex,playerHealth] = enemyAI(battleground,enemyIndex,playerX,playerY,boardX,boardY,enemyNumber,playerHealth,damage);
+       [battleground,enemyIndex,playerHealth, enemyIndexBattleground] = enemyAI(battleground,enemyIndex,playerX,playerY,boardX,boardY,enemyNumber,playerHealth,damage, enemyIndexBattleground);
     end
 
     if playerHealth <= 0
@@ -47,9 +44,5 @@ while playerHealth > 0 || enemyNumber > 0
     end
 end
 
+disp(battleground);
 disp("Thank you for playing my game!");
-%enemyIndex
-% battleground(enemyIndex(2,1),enemyIndex(3,1))
-% battleground(enemyIndex(2,2),enemyIndex(3,2))
-% battleground(enemyIndex(2,3),enemyIndex(3,3))
-% battleground(enemyIndex(2,4),enemyIndex(3,4))
