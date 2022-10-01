@@ -3,16 +3,16 @@
 clc
 clear
 
-boardY = 7; % board height
-boardX = 6; % board width
-battleground = zeros([boardY boardX]);
+Y = 7; % board height
+X = 6; % board width
+battleground = zeros([Y X]);
 
 enemyNumber = 10;
 
 playerNumber = 1;
 playerHealth = 150;
-enemyHealthMin = 40;
-enemyHealthMax = 100;
+enemHealthMin = 40;
+enemHealthMax = 100;
 damage = 15;
 attackPower = 25; % user
 
@@ -20,15 +20,15 @@ attackPower = 25; % user
 
 % player and enemy need: location, health, attacks. 
 
-[battleground,enemyIndex] = enemyPlacement(enemyNumber,boardY,boardX,battleground,enemyHealthMin,enemyHealthMax);
-[battleground,playerX,playerY] = playerPlacement(playerNumber,boardY,boardX,battleground,playerHealth);
+[battleground,enemyIndex] = enemyPlacement(enemyNumber,Y,X,battleground,enemHealthMin,enemHealthMax);
+[battleground,playerX,playerY] = playerPlacement(playerNumber,Y,X,battleground,playerHealth);
 
 % playerX = X;
 % playerY = 1;
 % battleground(playerY,playerX) = playerHealth;
 while playerHealth > 0 || enemyNumber > 0
     disp(battleground)
-    [battleground,playerX,playerY,userInput,enemyIndex,enemyNumber] = parseInput(battleground,playerX,playerY,boardX,boardY,enemyIndex,enemyNumber,attackPower);
+    [battleground,playerX,playerY,userInput,enemyIndex,enemyNumber] = parseInput(battleground,playerX,playerY,X,Y,enemyIndex,enemyNumber,attackPower);
     if userInput == "0"
         break
     end
@@ -36,18 +36,19 @@ while playerHealth > 0 || enemyNumber > 0
     if sum(sum(sum(battleground)) - playerHealth) >= 0
         disp("All enemies eliminated! You win!");
         break
-    else
-        [battleground,enemyIndex,playerHealth] = enemyAI(battleground,enemyIndex,playerX,playerY,boardX,boardY,enemyNumber,playerHealth,damage);
     end
-
-    if playerHealth <= 0
+%     randVar4Enemies = randi(10);
+%     if randVar4Enemies < 9
+        [battleground,enemyIndex,playerHealth] = enemyAI(battleground,enemyIndex,playerX,playerY,X,Y,enemyNumber,playerHealth,damage);
+%     end
+    if playerHealth < 0
         disp("Game over!")
         disp(battleground)
         break
     end
 end
 
-disp("Thank you for playing my game!");
+
 %enemyIndex
 % battleground(enemyIndex(2,1),enemyIndex(3,1))
 % battleground(enemyIndex(2,2),enemyIndex(3,2))

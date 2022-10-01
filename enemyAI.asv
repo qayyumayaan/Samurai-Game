@@ -6,13 +6,17 @@ for enc = 1:enemyNumber
     enemyY = enemyIndex(2,enc);
     enemyX = enemyIndex(3,enc);
 
-    if enemyHealth >= 0
-        return
-    else
-
     enemyPlayerDistanceY = enemyY - playerY;
     enemyPlayerDistanceX = enemyX - playerX;
     
+    if enemyPlayerDistanceX > 0 % enemy is to right of player
+        enemyMovement = -1;
+    elseif enemyPlayerDistanceX < 0 % enemy is to left of player
+        enemyMovement = 1;
+    else
+        
+    end
+        
 %     enemyPlayerDistance = sqrt(enemyPlayerDistanceY^2 + enemyPlayerDistanceX^2);
 %     boardHypotenuse = sqrt(boardX^2 + boardY^2);
 
@@ -22,25 +26,8 @@ for enc = 1:enemyNumber
     if enemyMovement == 0 % enemy will not move this turn
         return
     else
-        enemyMoveDir = logical(randi([0 1])); % true for X, false for Y
-
-        if enemyMoveDir == true
-            if enemyPlayerDistanceX > 0 % enemy is to right of player
-                enemyMovement = -1;
-            elseif enemyPlayerDistanceX < 0 % enemy is to left of player
-                enemyMovement = 1;
-            else
-                enemyMoveDir = ~enemyMoveDir;
-            end
-        elseif enemyMoveDir == false
-            if enemyPlayerDistanceY > 0 % enemy is above player
-                enemyMovement = -1;
-            elseif enemyPlayerDistanceY < 0 % enemy is below player
-                enemyMovement = 1;
-            else
-                enemyMoveDir = ~enemyMoveDir;
-            end
-        end
+    % assigning variable for subfunction that actually moves enemy
+        enemyMoveDir = logical(randi([0 1])); % 1 for X, 0 for Y
 
     % determining if enemy can move
         [validSpot, newEnemyX, newEnemyY] = validSpotChecker(battleground, enemyMoveDir, enemyMovement, boardX, boardY, enemyX, enemyY);
@@ -59,9 +46,8 @@ for enc = 1:enemyNumber
         end
 
     end
-        
     end
-end
+
 
 
 end
