@@ -53,6 +53,7 @@ for enc = 1:enemyNumber
 
             battleground(newEnemyY,newEnemyX) = enemyHealth;
             battleground(enemyY,enemyX) = 0;
+            fprintf("Enemy with health %f moved one space! \n",enemyHealth);
 
         elseif validSpot == false
             return

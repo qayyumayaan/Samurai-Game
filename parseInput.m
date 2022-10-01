@@ -1,4 +1,4 @@
-function [battleground,playerX,playerY,userInput,enemyIndex,enemyNumber] = parseInput(battleground,playerX,playerY,X,Y,enemyIndex,enemyNumber,attackPower)
+function [battleground,playerX,playerY,userInput,enemyIndex,enemyNumber] = parseInput(battleground,playerX,playerY,X,Y,enemyIndex,enemyNumber,attackPower, damage)
 
     userInput = input(compose(splitlines("What will you do?" + "\n" + "0: quit. w:up. a: left. s:down. d: right. attack1. " + "\n")),"s");
     switch userInput
@@ -44,60 +44,11 @@ function [battleground,playerX,playerY,userInput,enemyIndex,enemyNumber] = parse
 
         case "attack1"
 
-            for iY = -1:1
-                for iX = -1:1
-                    if playerY+iY > Y || playerY+iY <= 0 || playerX+iX > X  || playerX+iX <= 0
-                    else
-                        if battleground(playerY+iY,playerX+iX) < 0
-                            if battleground(playerY+iY,playerX+iX) + attackPower >= 0
-                                for iEnemy = 1:enemyNumber
-                                    if enemyIndex(1,iEnemy) == battleground(playerY+iY,playerX+iX)
-                                        battleground(playerY+iY,playerX+iX) = 0;
-                                        enemyIndex(1,iEnemy) = battleground(playerY+iY,playerX+iX);
-                                        fprintf("/n Enemy eliminated! /n");
-                                    end
-                                end
-                                
+[battleground, enemyIndex] = attacks(userInput, battleground, enemyIndex, playerX, playerY, X, Y, enemyNumber, attackPower, damage, attackPower);
 
-                            else
-                                for iEnemy = 1:enemyNumber
-                                    if enemyIndex(1,iEnemy) == battleground(playerY+iY,playerX+iX)
-                                        battleground(playerY+iY,playerX+iX) = battleground(playerY+iY,playerX+iX) + attackPower; 
-                                        enemyIndex(1,iEnemy) = battleground(playerY+iY,playerX+iX);
-                                        fprintf("%f damage dealt! \n",attackPower);  
-                                    end
-                                end
-
-                            end
-                        end
-                    end
-                end
-            end
-
-        case "attack2"
-
-            for iY = -1:1
-                for iX = -1:1
-                    if playerY+iY > Y || playerY+iY <= 0 || playerX+iX > X  || playerX+iX <= 0
-                    else
-                        if battleground(playerY+iY,playerX+iX) < 0
-                            if battleground(playerY+iY,playerX+iX) + attackPower >= 0
-                                battleground(playerY+iY,playerX+iX) = 0;
-                            fprintf("\n Enemy eliminated!");
-                            else
-                                for iEnemy = 1:enemyNumber
-                                    if enemyIndex(1,iEnemy) == battleground(playerY+iY,playerX+iX)
-                                        battleground(playerY+iY,playerX+iX) = battleground(playerY+iY,playerX+iX) + attackPower; 
-                                        enemyIndex(1,iEnemy) = battleground(playerY+iY,playerX+iX);
-                                        disp("15 damage dealt!");  
-                                    end
-                                end
-
-                            end
-                        end
-                    end
-                end
-            end
+%         case "attack2"
+% 
+%             [battleground, enemyIndex] = attacks(userInput, battleground, enemyIndex, playerX, playerY, X, Y, enemyNumber, attackPower, damage);
 
         otherwise
             disp("Invalid input. Please try again.");
