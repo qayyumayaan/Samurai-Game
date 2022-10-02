@@ -5,7 +5,7 @@ clear
 
 boardY = 7; % board height
 boardX = 6; % board width
-battleground = zeros([boardY boardX]);
+battleground = zeros(boardY, boardX);
 
 enemyNumber = 10;
 
@@ -39,10 +39,10 @@ while playerHealth > 0 || enemyNumber > 0
 
     if playerHealth <= 0
         disp("Game over!")
-        disp(battleground)
         break
     end
 end
 
 disp(battleground);
 disp("Thank you for playing my game!");
+% clear

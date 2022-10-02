@@ -1,65 +1,40 @@
-function [battleground, enemyIndex, enemyIndexBattleground] = attacks(userInput, battleground, enemyIndex, playerX, playerY, boardX, boardY, enemyNumber, attackPower, damage, enemyIndexBattleground)
+function [battleground, enemyIndex, enemyIndexBattleground] = attacks(userInput, battleground, enemyIndex, playerX, playerY, boardX, boardY, enemyNumber, attackPower, enemyIndexBattleground)
  
 switch userInput
  
-    case 'a1'
+    case '1'
 
 for iY = -1:1
     for iX = -1:1
-        if playerY+iY > boardY || playerY+iY <= 0 || playerX+iX > boardX  || playerX+iX <= 0
-        else
-            
-            if  battleground(playerY+iY,playerX+iX) < 0
-                if battleground(playerY+iY,playerX+iX) + attackPower >= 0
-                    battleground(playerY+iY,playerX+iX) = 0;
-                    fprintf("\n Enemy with health %d eliminated! \n", enemyIndex(1,enemyIndexBattleground(playerY+iY,playerX+iX)));
-                    enemyIndex(1,enemyIndexBattleground(playerY+iY,playerX+iX)) = 0;
-                    enemyIndexBattleground(playerY+iY,playerX+iX) = 0;
-                    
-                else 
-                    battleground(playerY+iY,playerX+iX) = battleground(playerY+iY,playerX+iX) + attackPower; 
-                    fprintf("%d damage to enemy with health %d! \n",attackPower,enemyIndex(1,enemyIndexBattleground(playerY+iY,playerX+iX)))
-                    enemyIndex(1,enemyIndexBattleground(playerY+iY,playerX+iX)) = battleground(playerY+iY,playerX+iX);
-               
-                end
-            end
-            
-        end
+
+    [battleground, enemyIndexBattleground, enemyIndex] = enemyAttackUpdater(battleground, enemyIndexBattleground, enemyIndex, playerX, playerY, iX, iY, enemyNumber, attackPower, boardX, boardY);
+
     end
 end
 
-    case "attack2"
+    case '2'
 
-for iY = -1:1
-    for iX = -1:1
-        if playerY+iY > boardY || playerY+iY <= 0 || playerX+iX > boardX  || playerX+iX <= 0
-            return
-        else
+iY = 0;
+for iX = -boardX:boardX
+    
+    [battleground, enemyIndexBattleground, enemyIndex] = enemyAttackUpdater(battleground, enemyIndexBattleground, enemyIndex, playerX, playerY, iX, iY, enemyNumber, attackPower, boardX, boardY);
 
-        for en = 1:enemyNumber
-            if enemyIndex(1,en) == battleground(playerY+iY,playerX+iX)
-                if battleground(playerY+iY,playerX+iX) + attackPower >= 0
-                    battleground(playerY+iY,playerX+iX) = 0;
-                    enemyIndex(1,en) = battleground(playerY+iY,playerX+iX);
-                    fprintf("\n Enemy eliminated! \n");
-                    
-                else 
-                    battleground(playerY+iY,playerX+iX) = battleground(playerY+iY,playerX+iX) + attackPower; 
-                    enemyIndex(1,en) = battleground(playerY+iY,playerX+iX);
-                    fprintf("%f damage dealt! \n",attackPower);  
-               
-                end
-            end
-        end
-            
-        end
-    end
+end
+
+
+    case '3'
+
+iX = 0;
+for iY = -boardY:boardY
+
+    [battleground, enemyIndexBattleground, enemyIndex] = enemyAttackUpdater(battleground, enemyIndexBattleground, enemyIndex, playerX, playerY, iX, iY, enemyNumber, attackPower, boardX, boardY);
+
 end
 
 
 
-
-
+otherwise
+    disp("Invalid input. Please try again.");
 
 end
 end
