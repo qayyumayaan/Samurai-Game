@@ -1,4 +1,6 @@
 function [battleground, enemyIndexBattleground, enemyIndex] = enemyAttackUpdater(battleground, enemyIndexBattleground, enemyIndex, playerX, playerY, iX, iY, enemyNumber, attackPower, boardX, boardY)
+	
+	%% function updates enemy health if player attacks them.
 
 if playerY+iY > boardY || playerY+iY <= 0 || playerX+iX > boardX  || playerX+iX <= 0 
 else

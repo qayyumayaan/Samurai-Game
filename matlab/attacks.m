@@ -1,5 +1,7 @@
 function [battleground, enemyIndex, enemyIndexBattleground] = attacks(userInput, battleground, enemyIndex, playerX, playerY, boardX, boardY, enemyNumber, attackPower, enemyIndexBattleground)
  
+	%% function manages user attack input.
+		
 switch userInput
  
     case '1'
