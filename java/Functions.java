@@ -41,19 +41,19 @@ public class Functions {
         int randX = (int) Math.floor((boardDim[1] * Math.random()));
         playerPos[0] = randY;
         playerPos[1] = randX;
-        while (battleground[playerPos[0]][playerPos[1]] != 0) {
+        if (battleground[playerPos[0]][playerPos[1]] == 0) {
+            battleground[playerPos[0]][playerPos[1]] = playerPos[2];
+        } else {
             playerPlacement(boardDim, battleground, playerPos);
-            playerPos[0] = randY;
-            playerPos[1] = randX;
         }
     }
 
     static void printArray(int[][] array) {
 
         StdOut.println();
-        for (int i = 0; i < array.length - 1; i++) {
+        for (int i = 0; i < array.length; i++) {
             for (int j = 0; j < array[i].length; j++) {
-                StdOut.print(array[i][j] + " ");
+                StdOut.print(array[i][j] + "\t");
             }
             StdOut.println();
         }
@@ -84,7 +84,7 @@ public class Functions {
     }
 
     static void enemyAI(int[][] battleground, int[][] enemyIndexBattleground, int[][] enemyIndex,
-            int[] playerPos, int enemyNum, int playerHealth, int damage, int[] boardDim) {
+            int[] playerPos, int enemyNum, int damage, int[] boardDim) {
 
         for (int i = 0; i < enemyNum; i++) {
 
