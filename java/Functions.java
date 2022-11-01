@@ -9,6 +9,19 @@ public class Functions {
         return (sum >= 0);
     }
 
+    static void printArray(int[][] array) {
+
+        StdOut.println();
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array[i].length; j++) {
+                StdOut.print(array[i][j] + "\t");
+            }
+            StdOut.println();
+        }
+        StdOut.println();
+
+    }
+
     static void enemyPlacement(int enemyNum, int[] boardDim, int[][] enemyIndex,
             int[][] enemyIndexBattleground, int[][] battleground, int[] enemyHealthRange) {
 
@@ -46,19 +59,6 @@ public class Functions {
         } else {
             playerPlacement(boardDim, battleground, playerPos);
         }
-    }
-
-    static void printArray(int[][] array) {
-
-        StdOut.println();
-        for (int i = 0; i < array.length; i++) {
-            for (int j = 0; j < array[i].length; j++) {
-                StdOut.print(array[i][j] + "\t");
-            }
-            StdOut.println();
-        }
-        StdOut.println();
-
     }
 
     static boolean validSpot(int[][] battleground, boolean enemyMoveDir, int enemyMoveDist,
@@ -256,13 +256,17 @@ public class Functions {
                 for (int iY = -1; iY <= 1; iY++) {
                     for (int iX = -1; iX <= 1; iX++) { // loop checks each position to see if it is an enemy.
 
-                        playerOnEnemyAttackUpdater(battleground, enemyIndex, enemyIndexBattleground, playerPos, iX, iY,
+                        playerAttackedEnemy(battleground, enemyIndex, enemyIndexBattleground, playerPos, iX, iY,
                                 enemyNum, attackPower, boardDim);
 
                     }
                 }
             } else if (uinput.equals("2")) {
-
+                int iX = 0;
+                for (int iY = -battleground.length; iY < battleground.length; iY++) {
+                    playerAttackedEnemy(battleground, enemyIndex, enemyIndexBattleground, playerPos, iX, iY,
+                            enemyNum, attackPower, boardDim);
+                }
             }
         }
 
@@ -274,7 +278,7 @@ public class Functions {
 
     }
 
-    static void playerOnEnemyAttackUpdater(int[][] battleground, int[][] enemyIndex, int[][] enemyIndexBattleground,
+    static void playerAttackedEnemy(int[][] battleground, int[][] enemyIndex, int[][] enemyIndexBattleground,
             int[] playerPos, int iX, int iY, int enemyNum, int attackPower, int[] boardDim) {
 
         int playerY = playerPos[0];
@@ -284,7 +288,7 @@ public class Functions {
         int battgndRef = battleground[pYtemp][pXtemp];
 
         if (pYtemp > boardDim[0] || pYtemp < 0 ||
-                pXtemp > boardDim[1] || pXtemp <= 0) {
+                pXtemp > boardDim[1] || pXtemp <= 0) { // out of bounds
         } else {
             for (int i = 0; i < enemyNum; i++) {
                 if (enemyIndex[0][i] == battgndRef
@@ -293,7 +297,7 @@ public class Functions {
                         StdOut.println("Enemy with " + battgndRef + " health has been eliminated!");
                         battleground[pYtemp][pXtemp] = 0;
                         enemyIndexBattleground[pYtemp][pXtemp] = 0;
-                        for (int j = 0; j < enemyIndex[i].length; j++) {
+                        for (int j = 0; j < enemyIndex.length; j++) {
                             enemyIndex[j][i] = 0;
                         }
                     } else {
@@ -330,33 +334,3 @@ public class Functions {
         return win;
     }
 }
-
-// static void printArray(int[][] array) {
-
-// int[] maxIntLength = new int[array[1].length];
-// int[] minIntLength = new int[array[1].length];
-// String stringSpace = " ";
-// String copy = stringSpace;
-
-// for (int i = 0; i < array.length; i++) {
-// for (int j = 0; j < array[0].length; j++) {
-// maxIntLength[j] = Math.max(maxIntLength[j], array[i][j]);
-// minIntLength[j] = Math.min(minIntLength[j], array[i][j]);
-// }
-// }
-
-// for (int i = 0; i < array.length -1; i++) {
-// if (Math.abs(maxIntLength[i]) - Math.abs(minIntLength[i]) > 10) {
-// for (int k = 1; k < Math.log10(maxIntLength[i]) / 10; k += 1) {
-// stringSpace += " ";
-// }
-// }
-// for (int j = 0; j < array[i].length; j++) {
-// System.out.print(array[i][j] + stringSpace);
-// stringSpace = copy;
-// }
-// System.out.println();
-// }
-// System.out.println();
-
-// }
