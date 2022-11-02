@@ -110,8 +110,8 @@ public class Functions {
 
         boolean valid = false;
         if (enemyMoveDir == true) {
-            if ((enemyX + enemyMoveDist < boardDim[1]) || (enemyX + enemyMoveDist >= 0)) {
-
+            if ((enemyX + enemyMoveDist < boardDim[1]) && (enemyX + enemyMoveDist >= 0)) {
+                // problematic code
                 if (battleground[enemyY][enemyX + enemyMoveDist] == 0) {
                     valid = true;
                 }
@@ -132,81 +132,89 @@ public class Functions {
 
         for (int i = 0; i < enemyNum; i++) {
 
+            int maxSpacesMoved = 2;
             int enemyHealth = enemyIndex[0][i];
 
             if (enemyHealth < 0) {
+                int newEnemyY = enemyIndex[1][i];
+                int newEnemyX = enemyIndex[2][i];
+                int enemyPDisY = enemyIndex[1][i] - playerPos[0];
+                int enemyPDisX = enemyIndex[2][i] - playerPos[1];
 
-                int enemyY = enemyIndex[1][i];
-                int enemyX = enemyIndex[2][i];
-                int newEnemyY = 0;
-                int newEnemyX = 0;
+                boolean enemyMoveProb = (boolean) (.75 < Math.random()); // will enemy move? x% < random() == x% yes
 
-                int enemyPDisY = enemyY - playerPos[0];
-                int enemyPDisX = enemyX - playerPos[1];
+                if (enemyMoveProb == true) {
 
-                if ((enemyPDisY == 0 && Math.abs(enemyPDisX) == 1)
-                        || (enemyPDisX == 0 && Math.abs(enemyPDisX) == 1)) { // enemy damage potential
-                    battleground[playerPos[0]][playerPos[1]] = battleground[playerPos[0]][playerPos[1]] - damage;
-                    playerPos[2] -= damage;
-                    StdOut.println(damage + " damage to you by enemy with health " + enemyHealth + "! ");
+                    if ((enemyPDisY == 0 && Math.abs(enemyPDisX) == 1)
+                            || (enemyPDisX == 0 && Math.abs(enemyPDisX) == 1)) { // enemy -> player damage potential
+                        battleground[playerPos[0]][playerPos[1]] = battleground[playerPos[0]][playerPos[1]] - damage;
+                        playerPos[2] -= damage;
+                        StdOut.println(damage + " damage to you by enemy with health " + enemyHealth + "! ");
 
-                } else { // deciding movement dir
-                    int enemyMoveDist = (int) Math.ceil(3 * Math.random()); // distance to travel
-                    boolean enemyMoveDir = (boolean) (.5 < Math.random()); // direction: T for x, F for y
-                    boolean enemyMoveProb = (boolean) (.25 < Math.random()); // will enemy move?
-                    // int[] boardDim = { 10, 10 }; // temp
+                    } else { // deciding movement dir
+                        boolean valid = false;
+                        boolean enemyMoveDir = false;
+                        int enemyMoveDist = 0;
 
-                    if (enemyMoveProb == true) {
-                        if (enemyMoveDir == true) {
-                            if (enemyPDisX > 0) { // enemy is to right of P1
-                                enemyMoveDist *= -1;
-                            } else if (enemyMoveDir == false) {
-                                if (enemyPDisY < 0) { // enemy is below player
+                        while (valid == false) {
+                            enemyMoveDist = (int) Math.ceil(maxSpacesMoved * Math.random()); // distance to travel
+                            enemyMoveDir = (boolean) (.5 < Math.random()); // direction: T for x, F for y
+                            // int[] boardDim = { 10, 10 }; // temp
+
+                            if (enemyMoveDir == true) {
+                                if (enemyPDisX > 0) { // enemy is to right of P1
+                                    enemyMoveDist *= -1;
+                                }
+                            } else if (enemyMoveDir == false) { // Y movement
+                                if (enemyPDisY > 0) { // enemy is above player
                                     enemyMoveDist *= -1;
                                 }
                             }
+
+                            valid = Functions.validEnemyMovementSpot(battleground, enemyMoveDir, enemyMoveDist,
+                                    boardDim, enemyIndex[2][i], enemyIndex[1][i]);
+
                         }
 
-                        boolean valid = Functions.validEnemyMovementSpot(battleground, enemyMoveDir, enemyMoveDist,
-                                boardDim, enemyX,
-                                enemyY);
                         if (valid == true) { // updating movement
                             if (enemyMoveDir == false) { // move in Y dir
-                                // enemyIndexBattleground[enemyY][enemyX] = 0;
-                                newEnemyY = enemyY + enemyMoveDist;
-
+                                newEnemyY = enemyIndex[1][i] + enemyMoveDist;
                             } else if (enemyMoveDir == true) { // move in X dir
-                                newEnemyX = enemyX + enemyMoveDist;
+                                newEnemyX = enemyIndex[2][i] + enemyMoveDist;
                             }
+                            // updating enemyIndex, battleground, EIB
+                            int[] iHolder = { i };
+                            enemyIndexBattleground[newEnemyY][newEnemyX] = iHolder[0];
+                            enemyIndexBattleground[enemyIndex[1][i]][enemyIndex[2][i]] = 0;
 
-                            // updating enemyIndex, batlteground, EIB
                             battleground[newEnemyY][newEnemyX] = enemyIndex[0][i];
-                            battleground[enemyY][enemyX] = 0;
-                            enemyIndexBattleground[newEnemyY][newEnemyX] = i;
-                            enemyIndexBattleground[enemyY][enemyX] = 0;
-                            enemyIndex[1][i] = newEnemyY;
-                            enemyIndex[2][i] = newEnemyX;
+                            battleground[enemyIndex[1][i]][enemyIndex[2][i]] = 0;
+
+                            int[] enemyPosHolder = { newEnemyY, newEnemyX };
+                            enemyIndex[1][i] = enemyPosHolder[0];
+                            enemyIndex[2][i] = enemyPosHolder[1];
 
                             if (enemyMoveDir == true) { // movement in x dir
                                 if (enemyMoveDist < 0) {
                                     StdOut.println(
-                                            "Enemy with health " + enemyHealth + " moved one space to the left! ");
+                                            "Enemy with health " + enemyHealth + " moved " + Math.abs(enemyMoveDist)
+                                                    + " space to the left! ");
                                 } else if (enemyMoveDist > 0) {
                                     StdOut.println(
-                                            "Enemy with health " + enemyHealth + " moved one space to the right! ");
+                                            "Enemy with health " + enemyHealth + " moved " + Math.abs(enemyMoveDist)
+                                                    + " space to the right! ");
                                 }
-
-                            } else if (enemyMoveDir == false) {
+                            } else if (enemyMoveDir == false) { // move in y dir
                                 if (enemyMoveDist < 0) {
-                                    StdOut.println("Enemy with health " + enemyHealth + " moved one space up! ");
+                                    StdOut.println("Enemy with health " + enemyHealth + " moved "
+                                            + Math.abs(enemyMoveDist) + " space up! ");
                                 } else if (enemyMoveDist > 0) {
-                                    StdOut.println("Enemy with health " + enemyHealth + " moved one space down! ");
+                                    StdOut.println("Enemy with health " + enemyHealth + " moved "
+                                            + Math.abs(enemyMoveDist) + " space down! ");
                                 }
                             }
                         }
-
                     }
-
                 }
             }
         }

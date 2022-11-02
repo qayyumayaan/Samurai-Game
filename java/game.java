@@ -41,6 +41,8 @@ public class game {
 
             while (continueParseInputLoop == true) {
                 Functions.printArray(battleground);
+                // Functions.printArray(enemyIndexBattleground);
+
                 StdOut.print("What will you do? ");
 
                 Functions.parseInput(battleground, playerPos, boardDim, enemyIndex, enemyIndexBattleground, enemyNum,
@@ -64,8 +66,8 @@ public class game {
                 break;
             } else if (runRestFlag == true) {
 
-                // Functions.enemyAI(battleground, enemyIndexBattleground, enemyIndex,
-                // playerPos, enemyNum, damage, boardDim);
+                Functions.enemyAI(battleground, enemyIndexBattleground, enemyIndex,
+                        playerPos, enemyNum, damage, boardDim);
 
                 // Functions.printArray(enemyIndex);
 
@@ -88,8 +90,8 @@ public class game {
         }
         Functions.printArray(battleground);
         StdOut.println("Thank you so much for playing my game!");
-        // Functions.printArray(finalPlayerInputs);
-        Functions.printArray(enemyIndex);
+        Functions.printArray(finalPlayerInputs);
+        // Functions.printArray(enemyIndex);
 
     }
 }
