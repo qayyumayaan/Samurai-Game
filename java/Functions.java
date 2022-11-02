@@ -73,7 +73,7 @@ public class Functions {
                 }
             }
         } else if (enemyMoveDir == false) {
-            if (enemyY + enemyMoveDist < boardDim[0] && enemyY + enemyMoveDist >= 0) {
+            if ((enemyY + enemyMoveDist < boardDim[0]) && (enemyY + enemyMoveDist >= 0)) {
 
                 if (battleground[enemyY + enemyMoveDist][enemyX] == 0) {
                     valid = true;
@@ -125,7 +125,7 @@ public class Functions {
 
                         boolean valid = Functions.validSpot(battleground, enemyMoveDir, enemyMoveDist, boardDim, enemyX,
                                 enemyY);
-                        if (valid == true) { // updating move dir
+                        if (valid == true) { // updating movement
                             if (enemyMoveDir == false) { // move in Y dir
                                 // enemyIndexBattleground[enemyY][enemyX] = 0;
                                 newEnemyY = enemyY + enemyMoveDist;
@@ -135,15 +135,12 @@ public class Functions {
                             }
 
                             // updating enemyIndex, batlteground, EIB
-                            battleground[newEnemyY][newEnemyX] = enemyHealth;
+                            battleground[newEnemyY][newEnemyX] = enemyIndex[0][i];
                             battleground[enemyY][enemyX] = 0;
                             enemyIndexBattleground[newEnemyY][newEnemyX] = i;
                             enemyIndexBattleground[enemyY][enemyX] = 0;
-                            enemyIndex[0][i] = enemyHealth;
                             enemyIndex[1][i] = newEnemyY;
                             enemyIndex[2][i] = newEnemyX;
-
-                            // update battleground, enemyIndex, playerHealth, and enemyIndexBattleground
 
                             if (enemyMoveDir == true) { // movement in x dir
                                 if (enemyMoveDist < 0) {
@@ -205,6 +202,8 @@ public class Functions {
 
         String uinput = StdIn.readString();
 
+        resultParseInput[0] = 0;
+
         int pY = playerPos[0];
         int pX = playerPos[1];
         int bY = boardDim[0];
@@ -220,12 +219,15 @@ public class Functions {
 
         if (uinput.equals("0")) {
             resultParseInput[0] = -2;
+            return;
 
         } else if (uinput.equals("w")) {
             pYtest = pY - 1;
             pXtest = pX;
 
-            if (pYtest - 1 == 0) {
+            if (pYtest < 0) {
+                resultParseInput[0] = -1;
+            } else if (battleground[pYtest][pXtest] != 0) {
                 resultParseInput[0] = -1;
             }
 
@@ -233,14 +235,18 @@ public class Functions {
             pYtest = pY;
             pXtest = pX - 1;
 
-            if (pXtest - 1 == 0) {
+            if (pXtest < 0) {
+                resultParseInput[0] = -1;
+            } else if (battleground[pYtest][pXtest] != 0) {
                 resultParseInput[0] = -1;
             }
         } else if (uinput.equals("s")) {
             pYtest = pY + 1;
             pXtest = pX;
 
-            if (pYtest > bY) {
+            if (pYtest >= bY) {
+                resultParseInput[0] = -1;
+            } else if (battleground[pYtest][pXtest] != 0) {
                 resultParseInput[0] = -1;
             }
 
@@ -249,33 +255,46 @@ public class Functions {
             pXtest = pX + 1;
             if (pXtest > bX) {
                 resultParseInput[0] = -1;
+            } else if (battleground[pYtest][pXtest] != 0) {
+                resultParseInput[0] = -1;
             }
-        } else if (-1 != arrayComparer(validAttacks, Integer.parseInt(uinput))) { // checks if input is an attack
 
-            if (uinput.equals("1")) {
-                for (int iY = -1; iY <= 1; iY++) {
-                    for (int iX = -1; iX <= 1; iX++) { // loop checks each position to see if it is an enemy.
+        }
 
-                        playerAttackedEnemy(battleground, enemyIndex, enemyIndexBattleground, playerPos, iX, iY,
-                                enemyNum, attackPower, boardDim);
+        if (resultParseInput[0] == 0) {
+            battleground[pYtest][pXtest] = playerPos[2]; // updating health
+            battleground[pY][pX] = 0;
+            playerPos[0] = pYtest;
+            playerPos[1] = pXtest;
+        } else {
+            int uinputInt = 0;
+            try {
+                uinputInt = Integer.parseInt(uinput);
+                if (-1 != arrayComparer(validAttacks, uinputInt)) { // checks if
+                    // input is an
+                    // attack
 
+                    if (uinput.equals("1")) {
+                        for (int iY = -1; iY <= 1; iY++) {
+                            for (int iX = -1; iX <= 1; iX++) { // loop checks each position to see if it is an enemy.
+
+                                playerAttackedEnemy(battleground, enemyIndex, enemyIndexBattleground, playerPos, iX, iY,
+                                        enemyNum, attackPower, boardDim);
+
+                            }
+                        }
+                    } else if (uinput.equals("2")) {
+                        int iX = 0;
+                        for (int iY = -battleground.length; iY < battleground.length; iY++) {
+                            playerAttackedEnemy(battleground, enemyIndex, enemyIndexBattleground, playerPos, iX, iY,
+                                    enemyNum, attackPower, boardDim);
+                        }
                     }
                 }
-            } else if (uinput.equals("2")) {
-                int iX = 0;
-                for (int iY = -battleground.length; iY < battleground.length; iY++) {
-                    playerAttackedEnemy(battleground, enemyIndex, enemyIndexBattleground, playerPos, iX, iY,
-                            enemyNum, attackPower, boardDim);
-                }
+            } catch (NumberFormatException e) {
+                return;
             }
         }
-
-        if (resultParseInput[0] == -1) {
-
-        } else if (resultParseInput[0] == -2) {
-
-        }
-
     }
 
     static void playerAttackedEnemy(int[][] battleground, int[][] enemyIndex, int[][] enemyIndexBattleground,
@@ -329,6 +348,7 @@ public class Functions {
         for (int i = 0; i < input.length; i++) {
             if (flag == input[i]) {
                 win = i;
+                break;
             }
         }
         return win;

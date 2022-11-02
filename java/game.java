@@ -30,60 +30,55 @@ public class game {
          */
         // GAMEPLAY
 
-        // while (playerPos[2] > 0 || enemyNum > 0) {
+        while (playerPos[2] > 0 || enemyNum > 0) {
+            // parseInput
+            int[] resultParseInput = { 0, 0 };
+            boolean runRestFlag = true;
+            boolean continueParseInputLoop = true;
+
+            while (continueParseInputLoop == true) {
+                Functions.printArray(battleground);
+                StdOut.println("What will you do? ");
+
+                Functions.parseInput(battleground, playerPos, boardDim, enemyIndex, enemyIndexBattleground, enemyNum,
+                        attackPower, resultParseInput, validAttacks);
+
+                if (resultParseInput[0] == -2) {
+                    continueParseInputLoop = false;
+                    runRestFlag = false;
+                    break;
+                } else if (resultParseInput[0] == -1) {
+                    StdOut.println("You can't move here!");
+                } else if (resultParseInput[0] == -3) {
+                    StdOut.println("Unrecognized input. Please try again.");
+                } else {
+                    continueParseInputLoop = false;
+                    // code for attacking, iterating through attacked enemies
+                }
+            }
+
+            if (runRestFlag == false) {
+                break;
+            } else if (runRestFlag == true) {
+
+                // Functions.enemyAI(battleground, enemyIndexBattleground, enemyIndex,
+                // playerPos, enemyNum, damage, boardDim);
+
+                boolean win = Functions.winGame(battleground, playerPos[2]);
+                if (win == true) {
+                    StdOut.println("All enemies defeated. You win!");
+                    break;
+                }
+                if (playerPos[2] <= 0) {
+                    StdOut.println("Game over!");
+                    break;
+                }
+
+            }
+        }
+
         Functions.printArray(battleground);
-
-        // // parseInput
-        // int[] resultParseInput = { 0, 0 };
-        // boolean runRestFlag = true;
-        // boolean continueFlag = true;
-
-        // while (continueFlag == true) {
-        // StdOut.println("What will you do? ");
-
-        // // Functions.parseInput();
-
-        // if (resultParseInput[0] == -2) {
-        // continueFlag = false;
-        // runRestFlag = false;
-        // break;
-        // } else if (resultParseInput[0] == -1) {
-        // StdOut.println("You can't move here!");
-        // } else {
-        // continueFlag = false;
-        // battleground[resultParseInput[0]][resultParseInput[1]] =
-        // battleground[playerPos[0]][playerPos[1]];
-        // battleground[playerPos[0]][playerPos[1]] = 0;
-        // playerPos[0] = resultParseInput[0];
-        // playerPos[1] = resultParseInput[1];
-
-        // // code for attacking, iterating through attacked enemies
-        // }
-        // }
-
-        // if (runRestFlag == false) {
-        // break;
-        // } else if (runRestFlag == true) {
-        // Functions.printArray(battleground);
-
-        // Functions.enemyAI(battleground, enemyIndexBattleground, enemyIndex,
-        // playerPos, enemyNum, damage, boardDim);
-
-        // boolean win = Functions.winGame(battleground, playerPos[2]);
-        // if (win == true) {
-        // StdOut.println("All enemies defeated. You win!");
-        // break;
-        // }
-        // if (playerPos[2] <= 0) {
-        // StdOut.println("Game over!");
-        // break;
-        // }
-
-        // }
-        // }
-
-        // Functions.printArray(battleground);
-        // StdOut.println("Thank you so much for playing my game!");
+        StdOut.println("Thank you so much for playing my game!");
 
     }
 }
