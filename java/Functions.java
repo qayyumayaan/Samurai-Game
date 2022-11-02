@@ -73,10 +73,11 @@ public class Functions {
             int randY = (int) Math.floor((boardDim[0] * Math.random()));
             int randX = (int) Math.floor((boardDim[1] * Math.random()));
 
-            if (battleground[randY][randX] != 0) {
+            while (battleground[randY][randX] != 0) {
                 randY = (int) Math.floor(boardDim[0] * Math.random());
                 randX = (int) Math.floor(boardDim[1] * Math.random());
             }
+            enemyIndexBattleground[randY][randX] = i + 1; // important!
 
             int health = (int) Math.round(
                     (enemyHealthRange[1] - enemyHealthRange[0])
@@ -86,8 +87,7 @@ public class Functions {
             enemyIndex[1][i] = randY;
             enemyIndex[2][i] = randX;
 
-            enemyIndexBattleground[randY][randX] = i;
-            battleground[randY][randX] = enemyIndex[0][i];
+            battleground[randY][randX] = -1 * health;
 
         }
 
@@ -128,11 +128,10 @@ public class Functions {
     }
 
     static void enemyAI(int[][] battleground, int[][] enemyIndexBattleground, int[][] enemyIndex,
-            int[] playerPos, int enemyNum, int damage, int[] boardDim) {
+            int[] playerPos, int enemyNum, int damage, int[] boardDim, int maxSpacesMoved) {
 
         for (int i = 0; i < enemyNum; i++) {
 
-            int maxSpacesMoved = 2;
             int enemyHealth = enemyIndex[0][i];
 
             if (enemyHealth < 0) {
@@ -156,20 +155,16 @@ public class Functions {
                         boolean enemyMoveDir = false;
                         int enemyMoveDist = 0;
 
-                        while (valid == false) {
-                            enemyMoveDist = (int) Math.ceil(maxSpacesMoved * Math.random()); // distance to travel
-                            enemyMoveDir = (boolean) (.5 < Math.random()); // direction: T for x, F for y
-                            // int[] boardDim = { 10, 10 }; // temp
-
-                            if (enemyMoveDir == true) {
-                                if (enemyPDisX > 0) { // enemy is to right of P1
-                                    enemyMoveDist *= -1;
-                                }
-                            } else if (enemyMoveDir == false) { // Y movement
-                                if (enemyPDisY > 0) { // enemy is above player
-                                    enemyMoveDist *= -1;
-                                }
+                        while (valid == false) { // fix this loop!!!
+                            double rand2 = Math.random();
+                            if (maxSpacesMoved == 1) {
+                                enemyMoveDist = 1;
+                            } else {
+                                double rand = Math.random();
+                                enemyMoveDist = (int) Math.ceil(maxSpacesMoved * rand); // distance to travel
                             }
+                            enemyMoveDir = (boolean) (.5 < rand2); // direction: T for x, F for y
+                            // int[] boardDim = { 10, 10 }; // temp
 
                             valid = Functions.validEnemyMovementSpot(battleground, enemyMoveDir, enemyMoveDist,
                                     boardDim, enemyIndex[2][i], enemyIndex[1][i]);
@@ -183,8 +178,7 @@ public class Functions {
                                 newEnemyX = enemyIndex[2][i] + enemyMoveDist;
                             }
                             // updating enemyIndex, battleground, EIB
-                            int[] iHolder = { i };
-                            enemyIndexBattleground[newEnemyY][newEnemyX] = iHolder[0];
+                            enemyIndexBattleground[newEnemyY][newEnemyX] = i + 1;
                             enemyIndexBattleground[enemyIndex[1][i]][enemyIndex[2][i]] = 0;
 
                             battleground[newEnemyY][newEnemyX] = enemyIndex[0][i];
@@ -327,6 +321,8 @@ public class Functions {
         }
 
         if (resultParseInput[0] == 0) { // moving player routine
+            enemyIndexBattleground[pYtest][pXtest] = playerPos[2];
+            enemyIndexBattleground[pY][pX] = 0;
             battleground[pYtest][pXtest] = playerPos[2];
             battleground[pY][pX] = 0;
             playerPos[0] = pYtest;
@@ -343,8 +339,7 @@ public class Functions {
                 if (uinput.equals("1")) {
                     for (int iY = -1; iY <= 1; iY++) {
                         for (int iX = -1; iX <= 1; iX++) { // loop checks each position to see if it is an enemy.
-                            boolean validCont = inValidSpot(boardDim, playerPos, iY, iX);
-                            if (validCont == true) {
+                            if (inValidSpot(boardDim, playerPos, iY, iX) == true) {
                                 playerAttackedEnemy(battleground, enemyIndex, enemyIndexBattleground, playerPos, iX, iY,
                                         enemyNum, attackPower, boardDim);
                             }
@@ -391,12 +386,13 @@ public class Functions {
 
         int pYtemp = playerPos[0] + iY;
         int pXtemp = playerPos[1] + iX;
+        int[] attackPowerHolder = { attackPower };
 
         for (int i = 0; i < enemyNum; i++) {
-            if (enemyIndex[0][i] == battleground[pYtemp][pXtemp]
-                    && battleground[pYtemp][pXtemp] != 0) {
+            if (enemyIndex[0][i] != 0 && battleground[pYtemp][pXtemp] != 0
+                    && enemyIndex[0][i] == battleground[pYtemp][pXtemp]
+                    && pYtemp == enemyIndex[1][i] && pXtemp == enemyIndex[2][i]) {
                 if (battleground[pYtemp][pXtemp] + attackPower >= 0) {
-
                     StdOut.println("Enemy with " + battleground[pYtemp][pXtemp] + " health has been eliminated! ");
                     battleground[pYtemp][pXtemp] = 0;
                     enemyIndexBattleground[pYtemp][pXtemp] = 0;
@@ -404,11 +400,10 @@ public class Functions {
                         enemyIndex[j][i] = 0;
                     }
                 } else {
-                    battleground[pYtemp][pXtemp] += attackPower;
-                    enemyIndex[0][i] = battleground[pYtemp][pXtemp];
+                    battleground[pYtemp][pXtemp] += attackPowerHolder[0];
+                    enemyIndex[0][i] += attackPowerHolder[0];
                     // EIB stays the same bc enemy didn't move
                     StdOut.println(attackPower + " damage to enemy with health " + enemyIndex[0][i] + "! ");
-
                 }
             }
         }

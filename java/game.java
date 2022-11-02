@@ -4,23 +4,24 @@ public class game {
         int[] boardDim = { 7, 6 }; // y by x
 
         int[][] battleground = new int[boardDim[0]][boardDim[1]];
+        int[][] enemyIndexBattleground = new int[boardDim[0]][boardDim[1]];
 
         int enemyNum = 10; // formerly enemyNumber
         int[] enemyHealthRange = { 40, 100 }; // min, max
         int damage = 15; // enemy attack power
+        int maxSpacesMoved = 1;
 
         // int playerNum = 1;
         int[] playerPos = { 0, 0, 150 }; // playerPos[2] = health
         int attackPower = 25;
 
-        int[][] enemyIndexBattleground = battleground;
         int[][] enemyIndex = new int[3][enemyNum];
         int[] validAttacks = { 1, 2, 3 };
-        // int[] result = { 0, 0 };
 
         // routine that places enemies, makes enemyIndexBattleground, battleground, and
-        Functions.enemyPlacement(enemyNum, boardDim, enemyIndex, enemyIndexBattleground, enemyIndexBattleground,
+        Functions.enemyPlacement(enemyNum, boardDim, enemyIndex, enemyIndexBattleground, battleground,
                 enemyHealthRange);
+
         // routine that places player
         Functions.playerPlacement(boardDim, enemyIndexBattleground, playerPos);
         battleground[playerPos[0]][playerPos[1]] = playerPos[2];
@@ -40,8 +41,10 @@ public class game {
             boolean continueParseInputLoop = true;
 
             while (continueParseInputLoop == true) {
+                Functions.printArray(enemyIndex);
+                Functions.printArray(enemyIndexBattleground);
                 Functions.printArray(battleground);
-                // Functions.printArray(enemyIndexBattleground);
+
 
                 StdOut.print("What will you do? ");
 
@@ -67,7 +70,7 @@ public class game {
             } else if (runRestFlag == true) {
 
                 Functions.enemyAI(battleground, enemyIndexBattleground, enemyIndex,
-                        playerPos, enemyNum, damage, boardDim);
+                        playerPos, enemyNum, damage, boardDim, maxSpacesMoved);
 
                 // Functions.printArray(enemyIndex);
 
