@@ -14,7 +14,7 @@ public class game {
         int attackPower = 25;
 
         int[][] enemyIndexBattleground = battleground;
-        int[][] enemyIndex = new int[4][enemyNum];
+        int[][] enemyIndex = new int[3][enemyNum];
         int[] validAttacks = { 1, 2, 3 };
         // int[] result = { 0, 0 };
 
@@ -29,6 +29,9 @@ public class game {
          * 
          */
         // GAMEPLAY
+        int playerInputsLength = 2000;
+        String[] playerInputs = new String[playerInputsLength];
+        int[] count = new int[1];
 
         while (playerPos[2] > 0 || enemyNum > 0) {
             // parseInput
@@ -38,10 +41,10 @@ public class game {
 
             while (continueParseInputLoop == true) {
                 Functions.printArray(battleground);
-                StdOut.println("What will you do? ");
+                StdOut.print("What will you do? ");
 
                 Functions.parseInput(battleground, playerPos, boardDim, enemyIndex, enemyIndexBattleground, enemyNum,
-                        attackPower, resultParseInput, validAttacks);
+                        attackPower, resultParseInput, validAttacks, playerInputs, count);
 
                 if (resultParseInput[0] == -2) {
                     continueParseInputLoop = false;
@@ -64,6 +67,8 @@ public class game {
                 // Functions.enemyAI(battleground, enemyIndexBattleground, enemyIndex,
                 // playerPos, enemyNum, damage, boardDim);
 
+                // Functions.printArray(enemyIndex);
+
                 boolean win = Functions.winGame(battleground, playerPos[2]);
                 if (win == true) {
                     StdOut.println("All enemies defeated. You win!");
@@ -77,8 +82,14 @@ public class game {
             }
         }
 
+        String[] finalPlayerInputs = new String[count[0]];
+        for (int i = 0; i < count[0]; i++) {
+            finalPlayerInputs[i] = playerInputs[i];
+        }
         Functions.printArray(battleground);
         StdOut.println("Thank you so much for playing my game!");
+        // Functions.printArray(finalPlayerInputs);
+        Functions.printArray(enemyIndex);
 
     }
 }

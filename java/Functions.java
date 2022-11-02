@@ -6,6 +6,7 @@ public class Functions {
                 sum += battleground[i][j];
             }
         }
+        sum -= playerHealth;
         return (sum >= 0);
     }
 
@@ -20,6 +21,49 @@ public class Functions {
         }
         StdOut.println();
 
+    }
+
+    static void printArray(int[] array) {
+
+        StdOut.println();
+        for (int i = 0; i < array.length; i++) {
+            StdOut.print(array[i] + "\t");
+        }
+        StdOut.println();
+
+    }
+
+    static void printArray(String[] array) {
+
+        StdOut.println();
+        for (int i = 0; i < array.length; i++) {
+            StdOut.print(array[i] + " ");
+        }
+        StdOut.println();
+
+    }
+
+    static int[] intArrayMerger(int[] array1, int[] array2) {
+        int array1length = array1.length;
+        int array2length = array2.length;
+        int[] bigArray = new int[array1length + array2length];
+
+        for (int i = 0; i < array2.length; i++) {
+            bigArray[i + array1length] = array2[i];
+        }
+        return bigArray;
+    }
+
+    static int arrayComparer(int[] input, int flag) {
+        // function checks if any int flag matches any index in input array
+        int win = -1;
+        for (int i = 0; i < input.length; i++) {
+            if (flag == input[i]) {
+                win = i;
+                break;
+            }
+        }
+        return win;
     }
 
     static void enemyPlacement(int enemyNum, int[] boardDim, int[][] enemyIndex,
@@ -61,7 +105,7 @@ public class Functions {
         }
     }
 
-    static boolean validSpot(int[][] battleground, boolean enemyMoveDir, int enemyMoveDist,
+    static boolean validEnemyMovementSpot(int[][] battleground, boolean enemyMoveDir, int enemyMoveDist,
             int[] boardDim, int enemyX, int enemyY) {
 
         boolean valid = false;
@@ -123,7 +167,8 @@ public class Functions {
                             }
                         }
 
-                        boolean valid = Functions.validSpot(battleground, enemyMoveDir, enemyMoveDist, boardDim, enemyX,
+                        boolean valid = Functions.validEnemyMovementSpot(battleground, enemyMoveDir, enemyMoveDist,
+                                boardDim, enemyX,
                                 enemyY);
                         if (valid == true) { // updating movement
                             if (enemyMoveDir == false) { // move in Y dir
@@ -145,17 +190,17 @@ public class Functions {
                             if (enemyMoveDir == true) { // movement in x dir
                                 if (enemyMoveDist < 0) {
                                     StdOut.println(
-                                            "Enemy with health " + enemyHealth + " moved one space to the left!");
+                                            "Enemy with health " + enemyHealth + " moved one space to the left! ");
                                 } else if (enemyMoveDist > 0) {
                                     StdOut.println(
-                                            "Enemy with health " + enemyHealth + " moved one space to the right!");
+                                            "Enemy with health " + enemyHealth + " moved one space to the right! ");
                                 }
 
                             } else if (enemyMoveDir == false) {
                                 if (enemyMoveDist < 0) {
-                                    StdOut.println("Enemy with health " + enemyHealth + " moved one space up!");
+                                    StdOut.println("Enemy with health " + enemyHealth + " moved one space up! ");
                                 } else if (enemyMoveDist > 0) {
-                                    StdOut.println("Enemy with health " + enemyHealth + " moved one space down!");
+                                    StdOut.println("Enemy with health " + enemyHealth + " moved one space down! ");
                                 }
                             }
                         }
@@ -198,12 +243,14 @@ public class Functions {
     // }
 
     static void parseInput(int[][] battleground, int[] playerPos, int[] boardDim, int[][] enemyIndex,
-            int[][] enemyIndexBattleground, int enemyNum, int attackPower, int[] resultParseInput, int[] validAttacks) {
+            int[][] enemyIndexBattleground, int enemyNum, int attackPower, int[] resultParseInput, int[] validAttacks,
+            String[] playerInputs, int[] count) {
 
         String uinput = StdIn.readString();
+        playerInputs[count[0]] = uinput;
+        count[0]++;
 
-        resultParseInput[0] = 0;
-
+        resultParseInput[0] = -4;
         int pY = playerPos[0];
         int pX = playerPos[1];
         int bY = boardDim[0];
@@ -213,6 +260,8 @@ public class Functions {
         int pXtest = pX;
 
         // resultParseInput:
+        // -4: default
+        // -3: error
         // -2: break
         // -1: redo
         // 0: continue
@@ -229,6 +278,8 @@ public class Functions {
                 resultParseInput[0] = -1;
             } else if (battleground[pYtest][pXtest] != 0) {
                 resultParseInput[0] = -1;
+            } else {
+                resultParseInput[0] = 0;
             }
 
         } else if (uinput.equals("a")) {
@@ -239,6 +290,8 @@ public class Functions {
                 resultParseInput[0] = -1;
             } else if (battleground[pYtest][pXtest] != 0) {
                 resultParseInput[0] = -1;
+            } else {
+                resultParseInput[0] = 0;
             }
         } else if (uinput.equals("s")) {
             pYtest = pY + 1;
@@ -248,109 +301,109 @@ public class Functions {
                 resultParseInput[0] = -1;
             } else if (battleground[pYtest][pXtest] != 0) {
                 resultParseInput[0] = -1;
+            } else {
+                resultParseInput[0] = 0;
             }
 
         } else if (uinput.equals("d")) {
             pYtest = pY;
             pXtest = pX + 1;
-            if (pXtest > bX) {
+            if (pXtest >= bX) {
                 resultParseInput[0] = -1;
             } else if (battleground[pYtest][pXtest] != 0) {
                 resultParseInput[0] = -1;
+            } else {
+                resultParseInput[0] = 0;
             }
 
         }
 
-        if (resultParseInput[0] == 0) {
-            battleground[pYtest][pXtest] = playerPos[2]; // updating health
+        if (resultParseInput[0] == 0) { // moving player routine
+            battleground[pYtest][pXtest] = playerPos[2];
             battleground[pY][pX] = 0;
             playerPos[0] = pYtest;
             playerPos[1] = pXtest;
-        } else {
+        } else if (resultParseInput[0] == -4) {
             int uinputInt = 0;
             try {
                 uinputInt = Integer.parseInt(uinput);
-                if (-1 != arrayComparer(validAttacks, uinputInt)) { // checks if
-                    // input is an
-                    // attack
-
-                    if (uinput.equals("1")) {
-                        for (int iY = -1; iY <= 1; iY++) {
-                            for (int iX = -1; iX <= 1; iX++) { // loop checks each position to see if it is an enemy.
-
+            } catch (NumberFormatException e) {
+                resultParseInput[0] = -3;
+                return;
+            }
+            if (-1 != arrayComparer(validAttacks, uinputInt)) { // is input an attack?
+                if (uinput.equals("1")) {
+                    for (int iY = -1; iY <= 1; iY++) {
+                        for (int iX = -1; iX <= 1; iX++) { // loop checks each position to see if it is an enemy.
+                            boolean validCont = inValidSpot(boardDim, playerPos, iY, iX);
+                            if (validCont == true) {
                                 playerAttackedEnemy(battleground, enemyIndex, enemyIndexBattleground, playerPos, iX, iY,
                                         enemyNum, attackPower, boardDim);
-
                             }
                         }
-                    } else if (uinput.equals("2")) {
-                        int iX = 0;
-                        for (int iY = -battleground.length; iY < battleground.length; iY++) {
+                    }
+                } else if (uinput.equals("2")) {
+                    int iY = 0;
+                    for (int iX = -boardDim[1]; iX < boardDim[1]; iX++) {
+                        if (inValidSpot(boardDim, playerPos, iY, iX) == true) {
+                            playerAttackedEnemy(battleground, enemyIndex, enemyIndexBattleground, playerPos, iX, iY,
+                                    enemyNum, attackPower, boardDim);
+                        }
+                    }
+                } else if (uinput.equals("3")) {
+                    int iX = 0;
+                    for (int iY = -boardDim[0]; iY < boardDim[0]; iY++) {
+                        if (inValidSpot(boardDim, playerPos, iY, iX) == true) {
                             playerAttackedEnemy(battleground, enemyIndex, enemyIndexBattleground, playerPos, iX, iY,
                                     enemyNum, attackPower, boardDim);
                         }
                     }
                 }
-            } catch (NumberFormatException e) {
+            } else {
+                resultParseInput[0] = -3;
                 return;
             }
         }
     }
 
+    static boolean inValidSpot(int[] boardDim, int[] playerPos, int iY, int iX) {
+        boolean validSpot = true;
+        if (iY == 0 && iX == 0) {
+            validSpot = false;
+        } else if (playerPos[0] + iY >= boardDim[0] || playerPos[0] + iY < 0) {
+            validSpot = false;
+        } else if (playerPos[1] + iX >= boardDim[1] || playerPos[1] + iX < 0) {
+            validSpot = false;
+        }
+        return validSpot;
+    }
+
     static void playerAttackedEnemy(int[][] battleground, int[][] enemyIndex, int[][] enemyIndexBattleground,
             int[] playerPos, int iX, int iY, int enemyNum, int attackPower, int[] boardDim) {
 
-        int playerY = playerPos[0];
-        int playerX = playerPos[1];
-        int pYtemp = playerY + iY;
-        int pXtemp = playerX + iX;
-        int battgndRef = battleground[pYtemp][pXtemp];
+        int pYtemp = playerPos[0] + iY;
+        int pXtemp = playerPos[1] + iX;
 
-        if (pYtemp > boardDim[0] || pYtemp < 0 ||
-                pXtemp > boardDim[1] || pXtemp <= 0) { // out of bounds
-        } else {
-            for (int i = 0; i < enemyNum; i++) {
-                if (enemyIndex[0][i] == battgndRef
-                        && battgndRef != 0) {
-                    if (battgndRef + attackPower >= 0) {
-                        StdOut.println("Enemy with " + battgndRef + " health has been eliminated!");
-                        battleground[pYtemp][pXtemp] = 0;
-                        enemyIndexBattleground[pYtemp][pXtemp] = 0;
-                        for (int j = 0; j < enemyIndex.length; j++) {
-                            enemyIndex[j][i] = 0;
-                        }
-                    } else {
-                        battleground[pYtemp][pXtemp] += attackPower;
-                        enemyIndex[0][i] = battleground[pYtemp][pXtemp];
-                        enemyIndex[0][i] += attackPower;
-                        StdOut.println(attackPower + " damage to enemy with health " + enemyIndex[0][i]);
+        for (int i = 0; i < enemyNum; i++) {
+            if (enemyIndex[0][i] == battleground[pYtemp][pXtemp]
+                    && battleground[pYtemp][pXtemp] != 0) {
+                if (battleground[pYtemp][pXtemp] + attackPower >= 0) {
+
+                    StdOut.println("Enemy with " + battleground[pYtemp][pXtemp] + " health has been eliminated! ");
+                    battleground[pYtemp][pXtemp] = 0;
+                    enemyIndexBattleground[pYtemp][pXtemp] = 0;
+                    for (int j = 0; j < enemyIndex.length; j++) {
+                        enemyIndex[j][i] = 0;
                     }
+                } else {
+                    battleground[pYtemp][pXtemp] += attackPower;
+                    enemyIndex[0][i] = battleground[pYtemp][pXtemp];
+                    // EIB stays the same bc enemy didn't move
+                    StdOut.println(attackPower + " damage to enemy with health " + enemyIndex[0][i] + "! ");
+
                 }
             }
         }
 
-    }
-
-    static int[] intArrayMerger(int[] array1, int[] array2) {
-        int array1length = array1.length;
-        int array2length = array2.length;
-        int[] bigArray = new int[array1length + array2length];
-
-        for (int i = 0; i < array2.length; i++) {
-            bigArray[i + array1length] = array2[i];
-        }
-        return bigArray;
-    }
-
-    static int arrayComparer(int[] input, int flag) {
-        // function checks if any int flag matches any index in input array
-        int win = -1;
-        for (int i = 0; i < input.length; i++) {
-            if (flag == input[i]) {
-                win = i;
-                break;
-            }
-        }
-        return win;
     }
 }
