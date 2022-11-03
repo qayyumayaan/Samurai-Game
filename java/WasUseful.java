@@ -44,7 +44,7 @@ public class WasUseful {
 
     }
 
-    static void printArray(int[][] array) {
+    static void printArrayStringBattleground(int[][] array) {
         int[][] lengthArray = numLength(array);
         int[][] minMax = minMaxFinder(lengthArray);
         int[][] invLengthArray = lengthArray;

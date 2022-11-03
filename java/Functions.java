@@ -43,6 +43,44 @@ public class Functions {
 
     }
 
+    static void printArray(String[][] array) {
+
+        StdOut.println();
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array[i].length; j++) {
+                StdOut.print(array[i][j] + "  ");
+            }
+            StdOut.println();
+        }
+        StdOut.println();
+
+    }
+
+    public static String randomPlayerInput(String[] inputs) {
+        int rand = (int) Math.floor(inputs.length * Math.random());
+        String output = inputs[rand];
+        return output;
+    }
+
+    public static String[][] battlegroundModifier(int[][] battleground) {
+        int boardY = battleground.length;
+        int boardX = battleground[0].length;
+        String[][] newBoard = new String[boardY][boardX];
+
+        for (int i = 0; i < boardY; i++) {
+            for (int j = 0; j < boardX; j++) {
+                if (battleground[i][j] == 0) {
+                    newBoard[i][j] = ".";
+                } else if (battleground[i][j] > 0) {
+                    newBoard[i][j] = "P";
+                } else if (battleground[i][j] < 0) {
+                    newBoard[i][j] = "E";
+                }
+            }
+        }
+        return newBoard;
+    }
+
     static int[] intArrayMerger(int[] array1, int[] array2) {
         int array1length = array1.length;
         int array2length = array2.length;
@@ -128,7 +166,8 @@ public class Functions {
     }
 
     static void enemyAI(int[][] battleground, int[][] enemyIndexBattleground, int[][] enemyIndex,
-            int[] playerPos, int enemyNum, int damage, int[] boardDim, int maxSpacesMoved, boolean simulationMode) {
+            int[] playerPos, int enemyNum, int damage, int[] boardDim, int maxSpacesMoved, boolean simulationMode,
+            boolean suppressAllOutput) {
 
         for (int i = 0; i < enemyNum; i++) {
 
@@ -148,8 +187,10 @@ public class Functions {
                             || (enemyPDisX == 0 && Math.abs(enemyPDisX) == 1)) { // enemy -> player damage potential
                         battleground[playerPos[0]][playerPos[1]] = battleground[playerPos[0]][playerPos[1]] - damage;
                         playerPos[2] -= damage;
-                        if (simulationMode == false) {
-                            StdOut.println(damage + " damage to you by enemy with health " + enemyHealth + "! ");
+                        if (simulationMode == false && suppressAllOutput == true) {
+                            StdOut.println(damage + " damage to you! " + playerPos[2] + " health left! ");
+                            // StdOut.println(damage + " damage to you by enemy with health " + enemyHealth
+                            // + "! ");
                         }
                     } else { // deciding movement dir
                         boolean valid = false;
@@ -231,27 +272,27 @@ public class Functions {
                             enemyIndex[1][i] = enemyPosHolder[0];
                             enemyIndex[2][i] = enemyPosHolder[1];
 
-                            if (simulationMode == false) {
-                                if (enemyMoveDir == true) { // movement in x dir
-                                    if (enemyMoveDist < 0) {
-                                        StdOut.println(
-                                                "Enemy with health " + enemyHealth + " moved " + Math.abs(enemyMoveDist)
-                                                        + " space to the left! ");
-                                    } else if (enemyMoveDist > 0) {
-                                        StdOut.println(
-                                                "Enemy with health " + enemyHealth + " moved " + Math.abs(enemyMoveDist)
-                                                        + " space to the right! ");
-                                    }
-                                } else if (enemyMoveDir == false) { // move in y dir
-                                    if (enemyMoveDist < 0) {
-                                        StdOut.println("Enemy with health " + enemyHealth + " moved "
-                                                + Math.abs(enemyMoveDist) + " space up! ");
-                                    } else if (enemyMoveDist > 0) {
-                                        StdOut.println("Enemy with health " + enemyHealth + " moved "
-                                                + Math.abs(enemyMoveDist) + " space down! ");
-                                    }
-                                }
-                            }
+                            // if (simulationMode == false) {
+                            // if (enemyMoveDir == true) { // movement in x dir
+                            // if (enemyMoveDist < 0) {
+                            // StdOut.println(
+                            // "Enemy with health " + enemyHealth + " moved " + Math.abs(enemyMoveDist)
+                            // + " space to the left! ");
+                            // } else if (enemyMoveDist > 0) {
+                            // StdOut.println(
+                            // "Enemy with health " + enemyHealth + " moved " + Math.abs(enemyMoveDist)
+                            // + " space to the right! ");
+                            // }
+                            // } else if (enemyMoveDir == false) { // move in y dir
+                            // if (enemyMoveDist < 0) {
+                            // StdOut.println("Enemy with health " + enemyHealth + " moved "
+                            // + Math.abs(enemyMoveDist) + " space up! ");
+                            // } else if (enemyMoveDist > 0) {
+                            // StdOut.println("Enemy with health " + enemyHealth + " moved "
+                            // + Math.abs(enemyMoveDist) + " space down! ");
+                            // }
+                            // }
+                            // }
                         }
                     }
                 }
@@ -410,7 +451,10 @@ public class Functions {
                     && pYtemp == enemyIndex[1][i] && pXtemp == enemyIndex[2][i]) {
                 if (battleground[pYtemp][pXtemp] + attackPower >= 0) {
                     if (simulationMode == false) {
-                        StdOut.println("Enemy with " + battleground[pYtemp][pXtemp] + " health has been eliminated! ");
+                        // StdOut.println("Enemy with " + battleground[pYtemp][pXtemp] + " health has
+                        // been eliminated! ");
+                        StdOut.println("Enemy has been eliminated! ");
+
                     }
                     battleground[pYtemp][pXtemp] = 0;
                     enemyIndexBattleground[pYtemp][pXtemp] = 0;
@@ -422,16 +466,12 @@ public class Functions {
                     enemyIndex[0][i] += attackPowerHolder[0];
                     // EIB stays the same bc enemy didn't move
                     if (simulationMode == false) {
-                        StdOut.println(attackPower + " damage to enemy with health " + enemyIndex[0][i] + "! ");
+                        // StdOut.println(attackPower + " damage to enemy with health " +
+                        // enemyIndex[0][i] + "! ");
+                        StdOut.println(attackPower + " damage dealt! ");
                     }
                 }
             }
         }
-    }
-
-    public static String randomPlayerInput(String[] inputs) {
-        int rand = (int) Math.floor(inputs.length * Math.random());
-        String output = inputs[rand];
-        return output;
     }
 }
