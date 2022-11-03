@@ -128,7 +128,7 @@ public class Functions {
     }
 
     static void enemyAI(int[][] battleground, int[][] enemyIndexBattleground, int[][] enemyIndex,
-            int[] playerPos, int enemyNum, int damage, int[] boardDim, int maxSpacesMoved) {
+            int[] playerPos, int enemyNum, int damage, int[] boardDim, int maxSpacesMoved, boolean simulationMode) {
 
         for (int i = 0; i < enemyNum; i++) {
 
@@ -148,26 +148,69 @@ public class Functions {
                             || (enemyPDisX == 0 && Math.abs(enemyPDisX) == 1)) { // enemy -> player damage potential
                         battleground[playerPos[0]][playerPos[1]] = battleground[playerPos[0]][playerPos[1]] - damage;
                         playerPos[2] -= damage;
-                        StdOut.println(damage + " damage to you by enemy with health " + enemyHealth + "! ");
-
+                        if (simulationMode == false) {
+                            StdOut.println(damage + " damage to you by enemy with health " + enemyHealth + "! ");
+                        }
                     } else { // deciding movement dir
                         boolean valid = false;
                         boolean enemyMoveDir = false;
                         int enemyMoveDist = 0;
-
+                        boolean moveMoreThanOneSpace = true;
+                        if (maxSpacesMoved == 1) {
+                            enemyMoveDist = 1;
+                            moveMoreThanOneSpace = false;
+                        }
+                        boolean triedAlready = false;
                         while (valid == false) { // fix this loop!!!
                             double rand2 = Math.random();
-                            if (maxSpacesMoved == 1) {
-                                enemyMoveDist = 1;
-                            } else {
+                            enemyMoveDir = (boolean) (.5 < rand2); // direction: T for x, F for y
+                            if (moveMoreThanOneSpace == true) {
                                 double rand = Math.random();
                                 enemyMoveDist = (int) Math.ceil(maxSpacesMoved * rand); // distance to travel
+                            } else if (triedAlready == true) {
+                                enemyMoveDir = true;
+                                enemyMoveDist = 1; // 1 unit right
+                                valid = Functions.validEnemyMovementSpot(battleground, enemyMoveDir, enemyMoveDist,
+                                        boardDim, enemyIndex[2][i], enemyIndex[1][i]);
+                                if (valid == false) {
+                                    enemyMoveDir = true;
+                                    enemyMoveDist = -1; // 1 unit left
+                                    valid = Functions.validEnemyMovementSpot(battleground, enemyMoveDir, enemyMoveDist,
+                                            boardDim, enemyIndex[2][i], enemyIndex[1][i]);
+                                    if (valid == false) {
+                                        enemyMoveDir = false;
+                                        enemyMoveDist = 1; // 1 unit down
+                                        valid = Functions.validEnemyMovementSpot(battleground, enemyMoveDir,
+                                                enemyMoveDist,
+                                                boardDim, enemyIndex[2][i], enemyIndex[1][i]);
+                                        if (valid == false) {
+                                            enemyMoveDir = false;
+                                            enemyMoveDist = -1; // 1 unit up
+                                            valid = Functions.validEnemyMovementSpot(battleground, enemyMoveDir,
+                                                    enemyMoveDist,
+                                                    boardDim, enemyIndex[2][i], enemyIndex[1][i]);
+                                            if (valid == false) {
+                                                enemyMoveDist = 0;
+                                                break;
+                                            } else {
+                                                break;
+                                            }
+                                        } else {
+                                            break;
+                                        }
+                                    } else {
+                                        break;
+                                    }
+                                } else {
+                                    break;
+                                }
                             }
-                            enemyMoveDir = (boolean) (.5 < rand2); // direction: T for x, F for y
-                            // int[] boardDim = { 10, 10 }; // temp
 
                             valid = Functions.validEnemyMovementSpot(battleground, enemyMoveDir, enemyMoveDist,
                                     boardDim, enemyIndex[2][i], enemyIndex[1][i]);
+                            if (valid == false) {
+                                triedAlready = true;
+                            }
 
                         }
 
@@ -188,23 +231,25 @@ public class Functions {
                             enemyIndex[1][i] = enemyPosHolder[0];
                             enemyIndex[2][i] = enemyPosHolder[1];
 
-                            if (enemyMoveDir == true) { // movement in x dir
-                                if (enemyMoveDist < 0) {
-                                    StdOut.println(
-                                            "Enemy with health " + enemyHealth + " moved " + Math.abs(enemyMoveDist)
-                                                    + " space to the left! ");
-                                } else if (enemyMoveDist > 0) {
-                                    StdOut.println(
-                                            "Enemy with health " + enemyHealth + " moved " + Math.abs(enemyMoveDist)
-                                                    + " space to the right! ");
-                                }
-                            } else if (enemyMoveDir == false) { // move in y dir
-                                if (enemyMoveDist < 0) {
-                                    StdOut.println("Enemy with health " + enemyHealth + " moved "
-                                            + Math.abs(enemyMoveDist) + " space up! ");
-                                } else if (enemyMoveDist > 0) {
-                                    StdOut.println("Enemy with health " + enemyHealth + " moved "
-                                            + Math.abs(enemyMoveDist) + " space down! ");
+                            if (simulationMode == false) {
+                                if (enemyMoveDir == true) { // movement in x dir
+                                    if (enemyMoveDist < 0) {
+                                        StdOut.println(
+                                                "Enemy with health " + enemyHealth + " moved " + Math.abs(enemyMoveDist)
+                                                        + " space to the left! ");
+                                    } else if (enemyMoveDist > 0) {
+                                        StdOut.println(
+                                                "Enemy with health " + enemyHealth + " moved " + Math.abs(enemyMoveDist)
+                                                        + " space to the right! ");
+                                    }
+                                } else if (enemyMoveDir == false) { // move in y dir
+                                    if (enemyMoveDist < 0) {
+                                        StdOut.println("Enemy with health " + enemyHealth + " moved "
+                                                + Math.abs(enemyMoveDist) + " space up! ");
+                                    } else if (enemyMoveDist > 0) {
+                                        StdOut.println("Enemy with health " + enemyHealth + " moved "
+                                                + Math.abs(enemyMoveDist) + " space down! ");
+                                    }
                                 }
                             }
                         }
@@ -214,43 +259,14 @@ public class Functions {
         }
     }
 
-    // static int[] enemyAttackChecker(int[][] battleground, int[][] enemyIndex,
-    // int[] playerPos,
-    // int enemyNum, int[] attackRangeDim, int attackPower) {
-
-    // int pY = playerPos[0];
-    // int pX = playerPos[1];
-    // int atkRngY = attackRangeDim[0];
-    // int atkRngX = attackRangeDim[1];
-    // int[] result = { -1 }; // gives enemyIndex# of attacked or defeated enemy.
-    // 2nd num is enemy's remaining
-    // // health
-    // int curBtg = battleground[atkRngY + pY][atkRngX + pX];
-    // for (int i = 0; i < enemyNum; i++) {
-
-    // if (curBtg != 0) {
-    // if (enemyIndex[0][i] == curBtg) {
-    // if (curBtg + attackPower >= 0) {
-    // result[1] = 0;
-    // } else {
-    // result[1] = curBtg + attackPower;
-    // }
-    // result[0] = i;
-    // }
-    // }
-    // }
-
-    // return result;
-
-    // }
-
     static void parseInput(int[][] battleground, int[] playerPos, int[] boardDim, int[][] enemyIndex,
             int[][] enemyIndexBattleground, int enemyNum, int attackPower, int[] resultParseInput, int[] validAttacks,
-            String[] playerInputs, int[] count) {
+            String[] playerInputs, int[] count, String uinput, boolean simulationMode, int playerInputsLength) {
 
-        String uinput = StdIn.readString();
-        playerInputs[count[0]] = uinput;
-        count[0]++;
+        if (count[0] < playerInputsLength) {
+            playerInputs[count[0]] = uinput;
+            count[0]++;
+        }
 
         resultParseInput[0] = -4;
         int pY = playerPos[0];
@@ -341,7 +357,7 @@ public class Functions {
                         for (int iX = -1; iX <= 1; iX++) { // loop checks each position to see if it is an enemy.
                             if (inValidSpot(boardDim, playerPos, iY, iX) == true) {
                                 playerAttackedEnemy(battleground, enemyIndex, enemyIndexBattleground, playerPos, iX, iY,
-                                        enemyNum, attackPower, boardDim);
+                                        enemyNum, attackPower, boardDim, simulationMode);
                             }
                         }
                     }
@@ -350,7 +366,7 @@ public class Functions {
                     for (int iX = -boardDim[1]; iX < boardDim[1]; iX++) {
                         if (inValidSpot(boardDim, playerPos, iY, iX) == true) {
                             playerAttackedEnemy(battleground, enemyIndex, enemyIndexBattleground, playerPos, iX, iY,
-                                    enemyNum, attackPower, boardDim);
+                                    enemyNum, attackPower, boardDim, simulationMode);
                         }
                     }
                 } else if (uinput.equals("3")) {
@@ -358,7 +374,7 @@ public class Functions {
                     for (int iY = -boardDim[0]; iY < boardDim[0]; iY++) {
                         if (inValidSpot(boardDim, playerPos, iY, iX) == true) {
                             playerAttackedEnemy(battleground, enemyIndex, enemyIndexBattleground, playerPos, iX, iY,
-                                    enemyNum, attackPower, boardDim);
+                                    enemyNum, attackPower, boardDim, simulationMode);
                         }
                     }
                 }
@@ -382,7 +398,7 @@ public class Functions {
     }
 
     static void playerAttackedEnemy(int[][] battleground, int[][] enemyIndex, int[][] enemyIndexBattleground,
-            int[] playerPos, int iX, int iY, int enemyNum, int attackPower, int[] boardDim) {
+            int[] playerPos, int iX, int iY, int enemyNum, int attackPower, int[] boardDim, boolean simulationMode) {
 
         int pYtemp = playerPos[0] + iY;
         int pXtemp = playerPos[1] + iX;
@@ -393,7 +409,9 @@ public class Functions {
                     && enemyIndex[0][i] == battleground[pYtemp][pXtemp]
                     && pYtemp == enemyIndex[1][i] && pXtemp == enemyIndex[2][i]) {
                 if (battleground[pYtemp][pXtemp] + attackPower >= 0) {
-                    StdOut.println("Enemy with " + battleground[pYtemp][pXtemp] + " health has been eliminated! ");
+                    if (simulationMode == false) {
+                        StdOut.println("Enemy with " + battleground[pYtemp][pXtemp] + " health has been eliminated! ");
+                    }
                     battleground[pYtemp][pXtemp] = 0;
                     enemyIndexBattleground[pYtemp][pXtemp] = 0;
                     for (int j = 0; j < enemyIndex.length; j++) {
@@ -403,10 +421,17 @@ public class Functions {
                     battleground[pYtemp][pXtemp] += attackPowerHolder[0];
                     enemyIndex[0][i] += attackPowerHolder[0];
                     // EIB stays the same bc enemy didn't move
-                    StdOut.println(attackPower + " damage to enemy with health " + enemyIndex[0][i] + "! ");
+                    if (simulationMode == false) {
+                        StdOut.println(attackPower + " damage to enemy with health " + enemyIndex[0][i] + "! ");
+                    }
                 }
             }
         }
+    }
 
+    public static String randomPlayerInput(String[] inputs) {
+        int rand = (int) Math.floor(inputs.length * Math.random());
+        String output = inputs[rand];
+        return output;
     }
 }

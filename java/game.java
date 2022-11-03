@@ -30,7 +30,11 @@ public class game {
          * 
          */
         // GAMEPLAY
-        int playerInputsLength = 2000;
+        boolean simulationMode = false;
+        if (simulationMode == true) {
+            Functions.printArray(battleground);
+        }
+        int playerInputsLength = 1000;
         String[] playerInputs = new String[playerInputsLength];
         int[] count = new int[1];
 
@@ -41,27 +45,40 @@ public class game {
             boolean continueParseInputLoop = true;
 
             while (continueParseInputLoop == true) {
-                Functions.printArray(enemyIndex);
-                Functions.printArray(enemyIndexBattleground);
-                Functions.printArray(battleground);
-
-
-                StdOut.print("What will you do? ");
-
-                Functions.parseInput(battleground, playerPos, boardDim, enemyIndex, enemyIndexBattleground, enemyNum,
-                        attackPower, resultParseInput, validAttacks, playerInputs, count);
-
-                if (resultParseInput[0] == -2) {
+                // Functions.printArray(enemyIndex);
+                // Functions.printArray(enemyIndexBattleground);
+                String uinput = "";
+                if (simulationMode == true) {
+                    String[] inputs = { "w", "a", "s", "d", "1", "2" };
+                    uinput = Functions.randomPlayerInput(inputs);
                     continueParseInputLoop = false;
-                    runRestFlag = false;
-                    break;
-                } else if (resultParseInput[0] == -1) {
-                    StdOut.println("You can't move here!");
-                } else if (resultParseInput[0] == -3) {
-                    StdOut.println("Unrecognized input. Please try again.");
+                    Functions.parseInput(battleground, playerPos, boardDim, enemyIndex, enemyIndexBattleground,
+                            enemyNum,
+                            attackPower, resultParseInput, validAttacks, playerInputs, count, uinput, simulationMode,
+                            playerInputsLength);
                 } else {
-                    continueParseInputLoop = false;
-                    // code for attacking, iterating through attacked enemies
+                    Functions.printArray(battleground);
+                    StdOut.print("What will you do? ");
+                    uinput = StdIn.readString();
+
+                    Functions.parseInput(battleground, playerPos, boardDim, enemyIndex, enemyIndexBattleground,
+                            enemyNum,
+                            attackPower, resultParseInput, validAttacks, playerInputs, count, uinput, simulationMode,
+                            playerInputsLength);
+
+                    if (resultParseInput[0] == -2) {
+                        continueParseInputLoop = false;
+                        runRestFlag = false;
+                        break;
+                    } else if (simulationMode == false) {
+                        if (resultParseInput[0] == -1) {
+                            StdOut.println("You can't move here!");
+                        } else if (resultParseInput[0] == -3) {
+                            StdOut.println("Unrecognized input. Please try again.");
+                        } else {
+                            continueParseInputLoop = false;
+                        }
+                    }
                 }
             }
 
@@ -70,9 +87,7 @@ public class game {
             } else if (runRestFlag == true) {
 
                 Functions.enemyAI(battleground, enemyIndexBattleground, enemyIndex,
-                        playerPos, enemyNum, damage, boardDim, maxSpacesMoved);
-
-                // Functions.printArray(enemyIndex);
+                        playerPos, enemyNum, damage, boardDim, maxSpacesMoved, simulationMode);
 
                 boolean win = Functions.winGame(battleground, playerPos[2]);
                 if (win == true) {
@@ -93,8 +108,10 @@ public class game {
         }
         Functions.printArray(battleground);
         StdOut.println("Thank you so much for playing my game!");
-        Functions.printArray(finalPlayerInputs);
-        // Functions.printArray(enemyIndex);
+        if (simulationMode == true) {
+            StdOut.println(finalPlayerInputs.length + " inputs to randomly clear the game.");
+            // Functions.printArray(finalPlayerInputs);
+        }
 
     }
 }
