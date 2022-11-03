@@ -48,7 +48,8 @@ public class Functions {
         StdOut.println();
         for (int i = 0; i < array.length; i++) {
             for (int j = 0; j < array[i].length; j++) {
-                StdOut.print(array[i][j] + "  ");
+                // StdOut.print(array[i][j] + " ");
+                StdOut.print(array[i][j] + "\t");
             }
             StdOut.println();
         }
@@ -62,6 +63,10 @@ public class Functions {
         return output;
     }
 
+    /**
+     * @param battleground
+     * @return
+     */
     public static String[][] battlegroundModifier(int[][] battleground) {
         int boardY = battleground.length;
         int boardX = battleground[0].length;
@@ -72,9 +77,11 @@ public class Functions {
                 if (battleground[i][j] == 0) {
                     newBoard[i][j] = ".";
                 } else if (battleground[i][j] > 0) {
-                    newBoard[i][j] = "P";
+                    // newBoard[i][j] = "P";
+                    newBoard[i][j] = Integer.toString(battleground[i][j]);
                 } else if (battleground[i][j] < 0) {
-                    newBoard[i][j] = "E";
+                    // newBoard[i][j] = "E";
+                    newBoard[i][j] = Integer.toString(battleground[i][j]);
                 }
             }
         }
